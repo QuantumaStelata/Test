@@ -1,5 +1,6 @@
 const.py
 base.json
 ffmpeg.exe
-bin
-voice
+bin/*
+voice/*
+__pycache__/const.cpython-38.pyc
