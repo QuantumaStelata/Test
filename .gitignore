@@ -4,3 +4,6 @@ ffmpeg.exe
 bin/*
 voice/*
 __pycache__/const.cpython-38.pyc
+*.pyc
+*.oga
+*.wav
