@@ -28,7 +28,7 @@ def delet(id, message):
 
     if IsDelete:
         if not Values:
-            const.bot.edit_message_text(chat_id=message.chat.id, message_id=const.list_id + 1, text='У тебя нет дел 😔')
+            const.bot.edit_message_text(chat_id=message.chat.id, message_id=const.copy[str(message.chat.id)]["List"] + 1, text='У тебя нет дел 😔')
         else:
             new_text = '📅 Список твоих дел:\n\n'
             listcopy = sorted(const.copy[str(message.chat.id)]["Work"])
@@ -38,7 +38,7 @@ def delet(id, message):
                 new_text = new_text + str(n) + ') ' + j.split(' ')[0][8:10] + '.' +j.split(' ')[0][5:7] + '.' +j.split(' ')[0][0:4] + ' в '+ j.split(' ')[1][:-3] + ' - ' + const.copy[str(message.chat.id)]["Work"][j] + '\n'
                 n += 1
             new_text = new_text + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
-            const.bot.edit_message_text(chat_id=message.chat.id, message_id=const.list_id + 1, text=new_text)
+            const.bot.edit_message_text(chat_id=message.chat.id, message_id=const.copy[str(message.chat.id)]["List"] + 1, text=new_text)
 
         with open('base.json', 'w', encoding="utf-8") as ff:
             json.dump(const.copy, ff, sort_keys=True, indent=4, ensure_ascii=False)

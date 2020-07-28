@@ -97,7 +97,8 @@ def command_new(message):
         work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
         bot.send_message(message.chat.id, work, parse_mode="Markdown")
 
-        const.list_id = message.message_id
+        const.copy[str(message.chat.id)]["List"] = message.message_id
+        Thread(target=const.save).start()
 
     else:
         bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
