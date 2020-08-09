@@ -1,5 +1,4 @@
 import telebot
-#from telebot import types
 from threading import Thread
 
 import re
@@ -16,8 +15,7 @@ from delete import delet
 from voice import voice
 from oldbasedel import old_base_del
 from monitoring import monitoring
-#import datetime
-#from datetime import datetime, timedelta
+
 
 bot = telebot.TeleBot(const.TOKEN)
 const.bot = bot
@@ -145,18 +143,6 @@ def main(message):
     else:
         if message.chat.id > 0:
             bot.send_message(message.chat.id, const.not_understand)
-
-
-
-
-'''keyboard = types.InlineKeyboardMarkup()
-    key_oven = types.InlineKeyboardButton(text='Овен', callback_data='test')
-    keyboard.add(key_oven)
-    bot.send_message(message.chat.id, "Нажми лучше на одну из кнопок ниже ⬇️", reply_markup=keyboard)'''
-'''@ bot.callback_query_handler(func=lambda call: True)
-def callback_worker(call):
-    if call.data == "test":
-        bot.send_message(call.message.chat.id, 'текст')'''
 
 
 if __name__ == '__main__':
