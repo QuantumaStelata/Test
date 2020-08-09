@@ -28,7 +28,8 @@ def voice(message):
     
     try:
         message.text = recog.recognize_google(audio, language="ru-RU").lower()      
-        const.bot.send_message(message.chat.id, "🗣 Вы сказали: " +  message.text.capitalize(), parse_mode="Markdown")
+        if message.chat.id > 0:
+            const.bot.send_message(message.chat.id, "🗣 Вы сказали: " +  message.text.capitalize(), parse_mode="Markdown")
     except:
         message.text = 'None'
         
