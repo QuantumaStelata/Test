@@ -1,5 +1,7 @@
 const.py
 base.json
+base.db
+base.db-journal
 ffmpeg.exe
 bin/
 voice/
