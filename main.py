@@ -3,6 +3,7 @@ from threading import Thread
 
 import re
 import json
+import sqlite3
 
 import const
 
@@ -20,13 +21,20 @@ from monitoring import monitoring
 bot = telebot.TeleBot(const.TOKEN)
 const.bot = bot
 
+
 @bot.message_handler(commands=["start"])
+@const.timedecor
 def command_start(message):
     bot.send_message(message.chat.id, const.start, parse_mode="Markdown")
 
-    if str(message.chat.id) not in const.copy.keys():
-        msg = bot.send_message(message.chat.id, const.timezonetext, parse_mode="Markdown")
-        bot.register_next_step_handler(msg, tz)
+    with sqlite3.connect('base.db') as db:
+        cur = db.cursor()
+
+        cur.execute(u"""SELECT chatid FROM base""")
+        for i in cur.fetchall():
+            if message.chat.id != i[0]:
+                msg = bot.send_message(message.chat.id, const.timezonetext, parse_mode="Markdown")
+                bot.register_next_step_handler(msg, tz)
 
 def tz(message):
     try:
