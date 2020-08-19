@@ -16,6 +16,7 @@ def old_base_del():
             cur.execute(u"""SELECT * FROM '{0}'""".format(i[0]))
             now = datetime.now() + timedelta(hours = i[1])
             for remind in cur.fetchall():
+                print (remind[0])
                 data = datetime(int(remind[0][0:4]), int(remind[0][5:7]), int(remind[0][8:10]), int(remind[0][11:13]), int(remind[0][14:16]), int(remind[0][17:19]))
                 if now > data:
                     cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
