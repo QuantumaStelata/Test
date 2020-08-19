@@ -2,7 +2,6 @@ import telebot
 from threading import Thread
 
 import re
-import json
 import sqlite3
 
 import const
@@ -29,7 +28,7 @@ def command_start(message):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT chatid FROM base""")
+        cur.execute(u"""SELECT chatid FROM {}""".format(const.base))
         chatid = [i[0] for i in cur.fetchall()]
 
         if message.chat.id not in chatid:
@@ -62,11 +61,9 @@ def changetz(message):
     try:
         timezone = int(message.text)
         if 12 >= timezone >= -12:
-            const.timezone = timezone
-            const.copy[str(message.chat.id)]["TZ"] = str(const.timezone)
-            with open('base.json', 'w', encoding="utf-8") as ff:
-                json.dump(const.copy, ff, sort_keys=True, indent=4, ensure_ascii=False)
-            bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
+            with sqlite3.connect('base.db') as db:
+                db.cursor().execute(u"""UPDATE {} SET timezone = {} WHERE chatid = {}""".format(const.base, timezone, message.chat.id))
+                bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
             bot.register_next_step_handler(msg, changetz)
@@ -92,23 +89,28 @@ def command_const(message):
 
 @bot.message_handler(commands=["list"])
 def command_new(message):
-    if const.copy[str(message.chat.id)]["Work"] != {}:
-        work = '📅 Список твоих дел:\n\n'
-        listcopy = sorted(const.copy[str(message.chat.id)]["Work"])
+    with sqlite3.connect('base.db') as db:
+        cur = db.cursor()
 
-        n = 1
-        for j in listcopy:
-            work = work + str(n) + ') ' + j.split(' ')[0][8:10] + '.' +j.split(' ')[0][5:7] + '.' +j.split(' ')[0][0:4] + ' в '+ j.split(' ')[1][:-3] + ' - ' + const.copy[str(message.chat.id)]["Work"][j] + '\n'
-            n += 1
+        cur.execute(u"""SELECT * FROM '{}'""".format(message.chat.id))
 
-        work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
-        bot.send_message(message.chat.id, work, parse_mode="Markdown")
+        if cur.fetchall() != []:
+            cur.execute(u"""SELECT * FROM '{}' ORDER BY time""".format(message.chat.id))
+        
+            work = '📅 Список твоих дел:\n\n'
+            
 
-        const.copy[str(message.chat.id)]['ListID'] = message.message_id
-        Thread(target=const.save).start() 
+            n = 1
+            for i in cur.fetchall():
+                work = work + str(n) + ') ' + i[0].split(' ')[0][8:10] + '.' + i[0].split(' ')[0][5:7] + '.' + i[0].split(' ')[0][0:4] + ' в '+ i[0].split(' ')[1][:-3] + ' - ' + i[1] + '\n'
+                n += 1
 
-    else:
-        bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
+            work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
+            bot.send_message(message.chat.id, work, parse_mode="Markdown")
+            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base))
+
+        else:
+            bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
 
 @bot.message_handler(content_types=["sticker"])
 def mainsticker(message):

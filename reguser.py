@@ -10,5 +10,5 @@ def reg(message):
             os.mkdir('voice/{}/'.format(str(message.chat.id)))
         except:
             pass
-        cur.execute(u"""INSERT OR IGNORE INTO base VALUES ({0}, '{1}', '{2}', '{3}', {4}, {5}, '{6}')""".format(message.chat.id, message.from_user.first_name, message.from_user.last_name, message.from_user.username, 0, const.timezone, u'voice/{}/'.format(message.chat.id)))
+        cur.execute(u"""INSERT OR IGNORE INTO {} VALUES ({}, '{}', '{}', '{}', {}, {}, '{}')""".format(const.base, message.chat.id, message.from_user.first_name, message.from_user.last_name, message.from_user.username, 0, const.timezone, u'voice/{}/'.format(message.chat.id)))
         cur.execute(u"""CREATE TABLE IF NOT EXISTS '{}' ('time'	TEXT, 'body' TEXT)""".format(message.chat.id))
