@@ -107,7 +107,7 @@ def command_new(message):
 
             work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
             bot.send_message(message.chat.id, work, parse_mode="Markdown")
-            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base))
+            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base, message.message_id, message.chat.id))
 
         else:
             bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
