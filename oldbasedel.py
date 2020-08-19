@@ -1,21 +1,23 @@
 # Функция для удаления устаревших записей пользователей
 # Запускается в main первая и один раз
 
-import json
+import sqlite3
 import const
 from datetime import datetime, timedelta
 
+@const.timedecor
 def old_base_del():
-    with open('base.json', 'r', encoding="utf-8") as f:  
-        copy_base = json.loads(f.read()) # Обход KeyError в цикле ниже
+    with sqlite3.connect('base.db') as db:
+        cur = db.cursor()
 
-    for key in copy_base:
-        for key1, val1 in copy_base[key]["Work"].items():
-            now = datetime.now() + timedelta(hours = int(copy_base[key]['TZ']))
-            data = datetime(int(key1[0:4]), int(key1[5:7]), int(key1[8:10]), int(key1[11:13]), int(key1[14:16]), int(key1[17:19]))
-            if now > data:
-                del const.copy[key]['Work'][key1]
+        cur.execute(u"""SELECT chatid, timezone FROM base""")
+        
+        for i in cur.fetchall():
+            cur.execute(u"""SELECT * FROM '{0}'""".format(i[0]))
+            now = datetime.now() + timedelta(hours = i[1])
+            for remind in cur.fetchall():
+                data = datetime(int(remind[0][0:4]), int(remind[0][5:7]), int(remind[0][8:10]), int(remind[0][11:13]), int(remind[0][14:16]), int(remind[0][17:19]))
+                if now > data:
+                    cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
 
-                with open('base.json', 'w', encoding="utf-8") as ff:
-                        json.dump(const.copy, ff, sort_keys=True, indent=4, ensure_ascii=False)
     

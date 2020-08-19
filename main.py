@@ -23,7 +23,6 @@ const.bot = bot
 
 
 @bot.message_handler(commands=["start"])
-@const.timedecor
 def command_start(message):
     bot.send_message(message.chat.id, const.start, parse_mode="Markdown")
 
