@@ -3,7 +3,6 @@ import const
 import telebot
 import os
 
-@const.timedecor
 def reg(message):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()

@@ -5,7 +5,7 @@ import sqlite3
 import const
 from datetime import datetime, timedelta
 
-@const.timedecor
+
 def old_base_del():
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
