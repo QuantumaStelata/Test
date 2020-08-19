@@ -30,10 +30,12 @@ def command_start(message):
         cur = db.cursor()
 
         cur.execute(u"""SELECT chatid FROM base""")
-        for i in cur.fetchall():
-            if message.chat.id != i[0]:
-                msg = bot.send_message(message.chat.id, const.timezonetext, parse_mode="Markdown")
-                bot.register_next_step_handler(msg, tz)
+        chatid = [i[0] for i in cur.fetchall()]
+
+        if message.chat.id not in chatid:
+            msg = bot.send_message(message.chat.id, const.timezonetext, parse_mode="Markdown")
+            bot.register_next_step_handler(msg, tz)
+        
 
 def tz(message):
     try:
