@@ -3,18 +3,18 @@
 # Запускается в main после функции olddelete.py во второй поток
 
 import sqlite3
-import const
 import telebot
+from const import base
 from datetime import datetime, timedelta
 
 
-def monitoring():
+def monitoring(bot):
     print ("Monitoring thread starting...")
     while True:
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
 
-            cur.execute(u"""SELECT chatid, timezone FROM {}""".format(const.base))
+            cur.execute(u"""SELECT chatid, timezone FROM {}""".format(base))
 
             for i in cur.fetchall():
                 now = datetime.now() + timedelta(hours=i[1])
@@ -23,6 +23,6 @@ def monitoring():
                 for remind in cur.fetchall():
                     if new_now in remind[0]:
                         print ('Я отправил - ' + remind[1])
-                        const.bot.send_message(i[0], text = remind[1])
+                        bot.send_message(i[0], text = remind[1])
                         cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
 

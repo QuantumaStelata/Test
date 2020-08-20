@@ -3,12 +3,11 @@
 
 import telebot
 import sqlite3
-import json
-import const
 import re
+from const import base
 from datetime import datetime
 
-def delet(message):
+def delet(message, bot):
     index = int(re.search(r'\d+', message.text).group()) - 1
 
     with sqlite3.connect('base.db') as db:
@@ -16,14 +15,13 @@ def delet(message):
 
         cur.execute(u"""SELECT * FROM '{}' ORDER BY time""".format(message.chat.id))
         body = [i for i in cur.fetchall()]
-        
+        n = 0
         if body != []:
-            if index+1 == len(body):
-                n = 0
+            if 0 < index+1 <= len(body):
                 for i in body:
                     if index == n:
                         cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(message.chat.id, i[0]))
-                        const.bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
+                        bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
 
                         cur.execute(u"""SELECT * FROM '{}'""".format(message.chat.id))
 
@@ -40,17 +38,18 @@ def delet(message):
 
                             work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
                             
-                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(const.base, message.chat.id))
-                            print (cur.fetchone()[0])
-                            const.bot.edit_message_text(message.chat.id, cur.fetchone()[0], work, parse_mode="Markdown")
+                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+                            bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text=work, parse_mode="Markdown")
 
                         else:
-                            const.bot.edit_message_text(message.chat.id, cur.fetchone()[0], 'У тебя нет дел 😔', parse_mode="Markdown")
+                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+                            bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text='У тебя нет дел 😔', parse_mode="Markdown")
+                           
                     n += 1
             else:
-                const.bot.send_message(message.chat.id, '❔ Такой заметки нет в списке')
+                bot.send_message(message.chat.id, '❔ Такой заметки нет в списке')
         else:
-            const.bot.send_message(message.chat.id, 'У тебя нет дел 😔')
+            bot.send_message(message.chat.id, 'У тебя нет дел 😔')
 
 
 

@@ -40,8 +40,7 @@ def tz(message):
     try:
         timezone = int(message.text)
         if 12 >= timezone and timezone >= -12:
-            const.timezone = timezone
-            Thread(target=reg, args = (message, )).start()
+            Thread(target=reg, args = (message, timezone)).start()
             bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз ввести свой часовой пояс...')
@@ -107,7 +106,7 @@ def command_new(message):
 
             work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
             bot.send_message(message.chat.id, work, parse_mode="Markdown")
-            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base, message.message_id, message.chat.id))
+            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base, message.message_id + 1, message.chat.id))
 
         else:
             bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
@@ -135,7 +134,7 @@ def main(message):
     elif re.search(r'\bчерез\b', message.text, re.IGNORECASE):
         if re.search(r'\bминут[уы]?', message.text, re.IGNORECASE):
             if re.search(r'\bчерез\b \d+ \bминут[уы]?', message.text, re.IGNORECASE):
-                Thread(target=inminute, args=(message,)).start()
+                Thread(target=inminute, args=(message, bot)).start()
             else:
                 bot.send_message(message.chat.id, const.not_understand)
 
@@ -149,7 +148,7 @@ def main(message):
                 bot.send_message(message.chat.id, const.not_understand)
 
     elif re.search(r'удалить.?\d+', message.text, re.IGNORECASE):
-        Thread(target=delet, args=(message,)).start()
+        Thread(target=delet, args=(message, bot)).start()
 
     else:
         if message.chat.id > 0:
@@ -159,5 +158,5 @@ def main(message):
 if __name__ == '__main__':
     const.push()                        # Рассылка по всем пользователям
     old_base_del()                      # Удаление старых записей
-    Thread(target=monitoring).start()   # Запуск 2-ого потока - функция monitoring из monitoring.py
+    Thread(target=monitoring, args=(bot,)).start()   # Запуск 2-ого потока - функция monitoring из monitoring.py
     bot.infinity_polling()

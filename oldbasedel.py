@@ -2,7 +2,7 @@
 # Запускается в main первая и один раз
 
 import sqlite3
-import const
+from const import base
 from datetime import datetime, timedelta
 
 
@@ -10,7 +10,7 @@ def old_base_del():
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT chatid, timezone FROM {}""".format(const.base))
+        cur.execute(u"""SELECT chatid, timezone FROM {}""".format(base))
         
         for i in cur.fetchall():
             cur.execute(u"""SELECT * FROM '{0}'""".format(i[0]))
