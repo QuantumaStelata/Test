@@ -149,7 +149,7 @@ def main(message):
                 bot.send_message(message.chat.id, const.not_understand)
 
     elif re.search(r'удалить.?\d+', message.text, re.IGNORECASE):
-        Thread(target=delet, args=(message.chat.id, message)).start()
+        Thread(target=delet, args=(message,)).start()
 
     else:
         if message.chat.id > 0:
