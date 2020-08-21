@@ -8,8 +8,8 @@
 
 import telebot
 import json
-import const
 import re
+from const base, remind
 from oldbasedel import old_base_del
 from datetime import datetime, timedelta
 from threading import Thread

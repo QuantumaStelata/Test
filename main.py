@@ -118,7 +118,7 @@ def mainsticker(message):
 
 @bot.message_handler(content_types=["voice"])
 def mainvoice(message):
-    voice(message)
+    voice(message, bot)
     main(message)
 
 @bot.message_handler(content_types=["text"])
@@ -129,7 +129,7 @@ def main(message):
         Thread(target=atdate, args=(message,)).start()
     
     elif re.search(r'[в]{1}\s*(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text, re.IGNORECASE):
-        Thread(target=athour, args=(message,)).start()
+        Thread(target=athour, args=(message, bot)).start()
 
     elif re.search(r'\bчерез\b', message.text, re.IGNORECASE):
         if re.search(r'\bминут[уы]?', message.text, re.IGNORECASE):
@@ -140,7 +140,7 @@ def main(message):
 
         elif re.search(r'\bчас[ао]*[в]?', message.text, re.IGNORECASE):
             if re.search(r'\bчерез\b \d+ \bчас[ао]*[в]?', message.text, re.IGNORECASE):
-                Thread(target=inhour, args=(message,)).start()
+                Thread(target=inhour, args=(message, bot)).start()
             else:
                 bot.send_message(message.chat.id, const.not_understand)
         else:

@@ -2,19 +2,22 @@
 # Через X часов ТЕКСТ
 
 import telebot
-import json
-import const
+import sqlite3
 import re
+from const import base, remind
 from datetime import datetime, timedelta
-from threading import Thread
 
 
-def inhour(message):
+def inhour(message, bot):
     hours = int(re.search(r'\d+', message.text).group())
     text = message.text[re.search(r'\bчас[ао]*[в]?', message.text, re.IGNORECASE).end() + 0:].strip().capitalize()
                 
-    remind = datetime.now() + timedelta(hours=hours + int(const.copy[str(message.chat.id)]["TZ"]))
-    const.copy[str(message.chat.id)]["Work"][str(remind.strftime("%Y")) + '.' + str(remind.strftime("%m")) + '.' + str(remind.strftime("%d")) + ' ' + str(remind.strftime("%H")) + ':' + str(remind.strftime("%M")) + ':' + str(remind.strftime("%S"))] = text
+    with sqlite3.connect('base.db') as db:
+        cur = db.cursor()
+        cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+
+        remind_ = datetime.now() + timedelta(hours=hours + cur.fetchone()[0])
+        remind_text = str(remind_.strftime("%Y")) + '.' + str(remind_.strftime("%m")) + '.' + str(remind_.strftime("%d")) + ' ' + str(remind_.strftime("%H")) + ':' + str(remind_.strftime("%M")) + ':' + str(remind_.strftime("%S"))
                
-    Thread(target=const.save).start()
-    const.bot.send_message(message.chat.id, const.remind)
+        cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind_text, text))
+        bot.send_message(message.chat.id, remind)

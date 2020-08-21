@@ -11,8 +11,6 @@ def inminute(message, bot):
     minutes = int(re.search(r'\d+', message.text).group())
     text = message.text[re.search(r'\bминут[уы]?', message.text, re.IGNORECASE).end() + 0:].strip().capitalize()
 
-    
-
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
         cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(base, message.chat.id))

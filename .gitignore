@@ -3,8 +3,8 @@ test.py
 json_to_db.py
 
 base.json
-base.db
-base.db-journal
+*.db
+*.db-journal
 
 ffmpeg.exe
 
