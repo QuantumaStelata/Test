@@ -126,7 +126,7 @@ def main(message):
     print(message.text)
     
     if re.search(r'(\d{1,2}[.|:|/]{1}\d{1,2}[.|:|/]{1}\d{2,4})(\s*)([в]\s*)?(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text, re.IGNORECASE):
-        Thread(target=atdate, args=(message,)).start()
+        Thread(target=atdate, args=(message, bot)).start()
     
     elif re.search(r'[в]{1}\s*(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text, re.IGNORECASE):
         Thread(target=athour, args=(message, bot)).start()
