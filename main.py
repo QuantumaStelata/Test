@@ -18,21 +18,20 @@ from monitoring import monitoring
 
 
 bot = telebot.TeleBot(const.TOKEN)
-const.bot = bot
 
 
 @bot.message_handler(commands=["start"])
 def command_start(message):
-    bot.send_message(message.chat.id, const.start, parse_mode="Markdown")
+    bot.send_message(message.chat.id, const.START, parse_mode="Markdown")
 
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT chatid FROM {}""".format(const.base))
+        cur.execute(u"""SELECT chatid FROM {}""".format(const.BASE))
         chatid = [i[0] for i in cur.fetchall()]
 
         if message.chat.id not in chatid:
-            msg = bot.send_message(message.chat.id, const.timezonetext, parse_mode="Markdown")
+            msg = bot.send_message(message.chat.id, const.TIMEZONETEXT, parse_mode="Markdown")
             bot.register_next_step_handler(msg, tz)
         
 
@@ -53,7 +52,7 @@ def tz(message):
 
 @bot.message_handler(commands=["time"])
 def command_time(message):
-    msg = bot.send_message(message.chat.id, const.timezonetext)
+    msg = bot.send_message(message.chat.id, const.TIMEZONETEXT)
     bot.register_next_step_handler(msg, changetz)
 
 def changetz(message):
@@ -61,7 +60,7 @@ def changetz(message):
         timezone = int(message.text)
         if 12 >= timezone >= -12:
             with sqlite3.connect('base.db') as db:
-                db.cursor().execute(u"""UPDATE {} SET timezone = {} WHERE chatid = {}""".format(const.base, timezone, message.chat.id))
+                db.cursor().execute(u"""UPDATE {} SET timezone = {} WHERE chatid = {}""".format(const.BASE, timezone, message.chat.id))
                 bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
@@ -73,7 +72,7 @@ def changetz(message):
 
 @bot.message_handler(commands=["callback"])
 def command_callback(message):
-    msg = bot.send_message(message.chat.id, const.callbacktext, parse_mode="Markdown")
+    msg = bot.send_message(message.chat.id, const.CALLBACKTEXT, parse_mode="Markdown")
     bot.register_next_step_handler(msg, callback)
 
 def callback(message):
@@ -83,7 +82,7 @@ def callback(message):
 
 @bot.message_handler(commands=["commands"])
 def command_const(message):
-    bot.send_message(message.chat.id, const.commands, parse_mode="Markdown")
+    bot.send_message(message.chat.id, const.COMMANDS, parse_mode="Markdown")
 
 
 @bot.message_handler(commands=["list"])
@@ -106,7 +105,7 @@ def command_new(message):
 
             work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
             bot.send_message(message.chat.id, work, parse_mode="Markdown")
-            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.base, message.message_id + 1, message.chat.id))
+            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(const.BASE, message.message_id + 1, message.chat.id))
 
         else:
             bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
@@ -131,32 +130,22 @@ def main(message):
     elif re.search(r'[в]{1}\s*(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text, re.IGNORECASE):
         Thread(target=athour, args=(message, bot)).start()
 
-    elif re.search(r'\bчерез\b', message.text, re.IGNORECASE):
-        if re.search(r'\bминут[уы]?', message.text, re.IGNORECASE):
-            if re.search(r'\bчерез\b \d+ \bминут[уы]?', message.text, re.IGNORECASE):
-                Thread(target=inminute, args=(message, bot)).start()
-            else:
-                bot.send_message(message.chat.id, const.not_understand)
-
-        elif re.search(r'\bчас[ао]*[в]?', message.text, re.IGNORECASE):
-            if re.search(r'\bчерез\b \d+ \bчас[ао]*[в]?', message.text, re.IGNORECASE):
-                Thread(target=inhour, args=(message, bot)).start()
-            else:
-                bot.send_message(message.chat.id, const.not_understand)
-        else:
-            if message.chat.id > 0:
-                bot.send_message(message.chat.id, const.not_understand)
-
+    elif re.search(r'(через)\s+(\d+)\s+(минут[уы]?)\s*(.*)', message.text, re.IGNORECASE):
+        Thread(target=inminute, args=(message, bot)).start()
+            
+    elif re.search(r'(через)\s+(\d+)\s+(час[ао]?[в]?)\s*(.*)', message.text, re.IGNORECASE):
+        Thread(target=inhour, args=(message, bot)).start()
+        
     elif re.search(r'удалить.?\d+', message.text, re.IGNORECASE):
         Thread(target=delet, args=(message, bot)).start()
 
     else:
         if message.chat.id > 0:
-            bot.send_message(message.chat.id, const.not_understand)
+            bot.send_message(message.chat.id, const.NOT_UNDERSTAND)
 
 
 if __name__ == '__main__':
-    const.push()                        # Рассылка по всем пользователям
+    const.push(bot)                        # Рассылка по всем пользователям
     old_base_del()                      # Удаление старых записей
     Thread(target=monitoring, args=(bot,)).start()   # Запуск 2-ого потока - функция monitoring из monitoring.py
     bot.infinity_polling()

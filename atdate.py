@@ -9,7 +9,7 @@
 import telebot
 import sqlite3
 import re
-from const import base, remind
+from const import REMIND
 from oldbasedel import old_base_del
 from datetime import datetime, timedelta
 from threading import Thread
@@ -38,6 +38,6 @@ def atdate(message, bot):
         cur = db.cursor()  
         cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind_text, text))
 
-    bot.send_message(message.chat.id, remind)
+    bot.send_message(message.chat.id, REMIND)
    
 

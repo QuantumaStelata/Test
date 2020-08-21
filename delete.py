@@ -4,7 +4,7 @@
 import telebot
 import sqlite3
 import re
-from const import base
+from const import BASE
 from datetime import datetime
 
 def delet(message, bot):
@@ -38,11 +38,11 @@ def delet(message, bot):
 
                             work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
                             
-                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
                             bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text=work, parse_mode="Markdown")
 
                         else:
-                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+                            cur.execute(u"""SELECT listid FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
                             bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text='У тебя нет дел 😔', parse_mode="Markdown")
                            
                     n += 1

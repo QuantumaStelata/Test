@@ -4,20 +4,21 @@
 import telebot
 import sqlite3
 import re
-from const import base, remind
+from const import BASE, REMIND
 from datetime import datetime, timedelta
 
 
 def inhour(message, bot):
-    hours = int(re.search(r'\d+', message.text).group())
-    text = message.text[re.search(r'\bчас[ао]*[в]?', message.text, re.IGNORECASE).end() + 0:].strip().capitalize()
-                
+    body = re.search(r'(через)\s+(?P<hour>\d+)\s+(час[ао]?[в]?)\s*(?P<text>.*)', message.text, re.IGNORECASE)       #Получаем тело сообщения
+
+    text = '🤷🏻‍♀️' if body['text'] == '' else body['text']     #Если напоминание пустое, присваиваем эмодзи, чтобы не получить ошибку пустого сообщения при напоминании
+
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
-        cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+        cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
 
-        remind_ = datetime.now() + timedelta(hours=hours + cur.fetchone()[0])
-        remind_text = str(remind_.strftime("%Y")) + '.' + str(remind_.strftime("%m")) + '.' + str(remind_.strftime("%d")) + ' ' + str(remind_.strftime("%H")) + ':' + str(remind_.strftime("%M")) + ':' + str(remind_.strftime("%S"))
+        remind_time = datetime.now() + timedelta(hours=int(body['hour']) + cur.fetchone()[0])
+        remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
                
-        cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind_text, text))
-        bot.send_message(message.chat.id, remind)
+        cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, body['text']))
+        bot.send_message(message.chat.id, REMIND)

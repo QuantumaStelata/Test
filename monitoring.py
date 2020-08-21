@@ -4,7 +4,7 @@
 
 import sqlite3
 import telebot
-from const import base
+from const import BASE
 from datetime import datetime, timedelta
 
 
@@ -14,7 +14,7 @@ def monitoring(bot):
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
 
-            cur.execute(u"""SELECT chatid, timezone FROM {}""".format(base))
+            cur.execute(u"""SELECT chatid, timezone FROM {}""".format(BASE))
 
             for i in cur.fetchall():
                 now = datetime.now() + timedelta(hours=i[1])

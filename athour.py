@@ -5,7 +5,7 @@
 import telebot
 import sqlite3
 import re
-from const import base, remind, not_understand
+from const import BASE, REMIND, NOT_UNDERSTAND
 from oldbasedel import old_base_del
 from datetime import datetime, timedelta
 from threading import Thread
@@ -27,7 +27,7 @@ def athour(message, bot):
         
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
-            cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(base, message.chat.id))
+            cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
 
             now = datetime.now() + timedelta(hours = cur.fetchone()[0])
             remind_ = datetime(int(now.year), int(now.month), int(now.day), int(hour), int(minute), int(now.second))
@@ -39,9 +39,9 @@ def athour(message, bot):
             
             cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind_text, text))
 
-        bot.send_message(message.chat.id, remind)
+        bot.send_message(message.chat.id, REMIND)
 
 
     except:
-        bot.send_message(message.chat.id, not_understand)
+        bot.send_message(message.chat.id, NOT_UNDERSTAND)
         
