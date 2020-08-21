@@ -113,7 +113,7 @@ def command_new(message):
 
 @bot.message_handler(content_types=["sticker"])
 def mainsticker(message):
-    file_info = bot.get_file(message.sticker.file_id)
+    #file_info = bot.get_file(message.sticker.file_id)
     bot.send_sticker(message.chat.id, 'CAACAgUAAxkBAAIBtF8W4mnS44I1futOLOabjzGI5BuJAAL_AANxffwUdic7ErtbrcEaBA')
 
 @bot.message_handler(content_types=["voice"])
