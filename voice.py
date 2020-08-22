@@ -33,4 +33,3 @@ def voice(message, bot):
             bot.send_message(message.chat.id, "🗣 Вы сказали: " + message.text.capitalize(), parse_mode="Markdown")
     except:
         message.text = "None"
-

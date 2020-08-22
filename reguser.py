@@ -17,4 +17,3 @@ def reg(message, timezone):
         
         cur.execute(
             u"""CREATE TABLE IF NOT EXISTS '{}' ('time'	TEXT, 'body' TEXT)""".format(message.chat.id))
-

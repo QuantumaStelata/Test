@@ -7,7 +7,6 @@ import re
 from const import BASE, REMIND
 from datetime import datetime, timedelta
 
-
 def inhour(message, bot):
     body = re.search(r'(через)\s+(?P<hour>\d+)\s+(час[ао]?[в]?)\s*(?P<text>.*)', message.text, re.IGNORECASE)       #Получаем тело сообщения
 

@@ -21,5 +21,3 @@ def inminute(message, bot):
 
         cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
         bot.send_message(message.chat.id, REMIND)
-
-

@@ -25,4 +25,3 @@ def monitoring(bot):
                         print ('Я отправил - ' + remind[1])
                         bot.send_message(i[0], text = remind[1])
                         cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
-

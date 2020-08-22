@@ -40,3 +40,5 @@
         1) Меняем базу с json на SQLite3.
         2) Оптимизировали re для inminute.py
         3) Оптимизировали re для inhour.py
+        4) Оптимизировали re для athour.py
+        5) Оптимизировали re для atdate.py

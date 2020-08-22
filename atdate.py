@@ -9,35 +9,25 @@
 import telebot
 import sqlite3
 import re
-from const import REMIND
-from oldbasedel import old_base_del
+from const import REMIND, NOT_UNDERSTAND
 from datetime import datetime, timedelta
-from threading import Thread
 
 def atdate(message, bot):
-    date = re.search(r'(\d{1,2}[.|:|/]{1}\d{1,2}[.|:|/]{1}\d{2,4})', message.text).group()  # Получаем дату
-    time = re.findall(r'(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text.replace(date,''))[0]    # Получаем время
+    try:
+        body = re.search(r'(?P<day>\d{1,2})[.|:|/](?P<month>\d{1,2})[.|:|/](?P<year>\d{4}|\d{2})\s+(в\s*)?(?P<hour>\d{1,2})[.|:|/]?(?P<minute>\d{0,2})\s*(?P<text>.*)', message.text, re.IGNORECASE)
+        
+        year = body['year'] if len(body['year']) == 4 else '20' + body['year']
+        minute = 0 if body['minute'] == '' else body['minute']
+        text = '🤷🏻‍♀️' if body['text'] == '' else body['text']
 
-    date = re.split(r'[.|:|/]', date)   # Получаем список [число, месяц, год]
-    time = re.split(r'[.|:|/]', time)   # Получаем список [час, минут]
+        now = datetime.now()
+        remind_time = datetime(int(year), int(body['month']), int(body['day']), int(body['hour']), int(minute), int(now.second))
+        remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
 
-    day = int(date[0])      # Получаем день
-    month = int(date[1])    # Получаем месяц
-    year = int(date[2]) if len(date[2]) == 4 else int("20" + str(date[2]))  # В случае если год указан 2-ух значно -> добавляет впереди 20
-  
-    hour = int(time[0])     # Получаем час
-    minute = int(time[1]) if len(time) > 1 else 0   # В случае если минуты не указаны присваевается 0
-    
-    text = message.text[re.search(r'(\d{1,2}[.|:|/]{1}\d{1,2}[.|:|/]{1}\d{2,4})(\s*)([в]\s*)?(\d{1,2}[.|:|/]{0,1}\d{0,2})', message.text, re.IGNORECASE).end() + 0:].strip().capitalize()
+        with sqlite3.connect('base.db') as db:
+            cur = db.cursor()  
+            cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
 
-    now = datetime.now()
-    remind_ = datetime(year, month, day, hour, minute, int(now.second))
-    remind_text = str(remind_.strftime("%Y")) + '.' + str(remind_.strftime("%m")) + '.' + str(remind_.strftime("%d")) + ' ' + str(remind_.strftime("%H")) + ':' + str(remind_.strftime("%M")) + ':' + str(remind_.strftime("%S"))
-
-    with sqlite3.connect('base.db') as db:
-        cur = db.cursor()  
-        cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind_text, text))
-
-    bot.send_message(message.chat.id, REMIND)
-   
-
+        bot.send_message(message.chat.id, REMIND)
+    except:        # На случай если пользователь ввел день > 31 или месяц > 12
+       bot.send_message(message.chat.id, NOT_UNDERSTAND)

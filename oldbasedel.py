@@ -19,5 +19,3 @@ def old_base_del():
                 data = datetime(int(remind[0][0:4]), int(remind[0][5:7]), int(remind[0][8:10]), int(remind[0][11:13]), int(remind[0][14:16]), int(remind[0][17:19]))
                 if now > data:
                     cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
-
-    
