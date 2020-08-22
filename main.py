@@ -38,7 +38,7 @@ def command_start(message):
 def tz(message):
     try:
         timezone = int(message.text)
-        if 12 >= timezone and timezone >= -12:
+        if 12 >= timezone >= -12:
             Thread(target=reg, args = (message, timezone)).start()
             bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
