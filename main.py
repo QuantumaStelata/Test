@@ -12,6 +12,7 @@ from inhour import inhour
 from athour import athour
 from atdate import atdate
 from delete import delet
+from sticker import sticker
 from voice import voice
 from oldbasedel import old_base_del
 from monitoring import monitoring
@@ -112,9 +113,9 @@ def command_new(message):
 
 @bot.message_handler(content_types=["sticker"])
 def mainsticker(message):
-    #file_info = bot.get_file(message.sticker.file_id)
-    bot.send_sticker(message.chat.id, 'CAACAgUAAxkBAAIBtF8W4mnS44I1futOLOabjzGI5BuJAAL_AANxffwUdic7ErtbrcEaBA')
-
+    sticker(message, bot)
+    main(message)
+    
 @bot.message_handler(content_types=["voice"])
 def mainvoice(message):
     voice(message, bot)
