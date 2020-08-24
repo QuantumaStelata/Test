@@ -141,7 +141,7 @@ def main(message):
         Thread(target=delet, args=(message, bot)).start()
 
     else:
-        if message.chat.id > 0:
+        if message.chat.id > 0 and message.text != 'Sticker.py/Message.text/None':
             bot.send_message(message.chat.id, const.NOT_UNDERSTAND)
 
 
