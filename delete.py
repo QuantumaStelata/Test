@@ -13,20 +13,20 @@ def delet(message, bot):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT * FROM '{}' ORDER BY time""".format(message.chat.id))
+        cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
         body = [i for i in cur.fetchall()]
         n = 0
         if body != []:
             if 0 < index+1 <= len(body):
                 for i in body:
                     if index == n:
-                        cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(message.chat.id, i[0]))
+                        cur.execute(u"""DELETE FROM 'user.{}' WHERE time IN ('{}')""".format(message.chat.id, i[0]))
                         bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
 
-                        cur.execute(u"""SELECT * FROM '{}'""".format(message.chat.id))
+                        cur.execute(u"""SELECT * FROM 'user.{}'""".format(message.chat.id))
 
                         if cur.fetchall() != []:
-                            cur.execute(u"""SELECT * FROM '{}' ORDER BY time""".format(message.chat.id))
+                            cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
                         
                             work = '📅 Список твоих дел:\n\n'
                             

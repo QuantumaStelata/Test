@@ -30,7 +30,7 @@ def athour(message, bot):
                     
             remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
                 
-            cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
+            cur.execute(u"""INSERT INTO 'user.{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
 
         bot.send_message(message.chat.id, REMIND)
     except:      # На случай если пользователь ввел час > 23 или минуты > 59

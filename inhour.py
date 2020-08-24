@@ -11,7 +11,7 @@ def inhour(message, bot):
     body = re.search(r'(через)\s+(?P<hour>\d+)\s+(час[ао]?[в]?)\s*(?P<text>.*)', message.text, re.IGNORECASE)       #Получаем тело сообщения
 
     text = '🤷🏻‍♀️' if body['text'] == '' else body['text']     #Если напоминание пустое, присваиваем эмодзи, чтобы не получить ошибку пустого сообщения при напоминании
-
+    
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
         cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
@@ -19,5 +19,5 @@ def inhour(message, bot):
         remind_time = datetime.now() + timedelta(hours=int(body['hour']) + cur.fetchone()[0])
         remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
                
-        cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, body['text']))
+        cur.execute(u"""INSERT INTO 'user.{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, body['text']))
         bot.send_message(message.chat.id, REMIND)

@@ -13,7 +13,7 @@ def reg(message, timezone):
             pass
         
         cur.execute(
-            u"""INSERT OR IGNORE INTO {} VALUES ({}, '{}', '{}', '{}', {}, {}, '{}')""".format(BASE, message.chat.id, message.from_user.first_name, message.from_user.last_name, message.from_user.username, 0, timezone, u"voice/{}/".format(message.chat.id)))
+            u"""INSERT OR IGNORE INTO {} VALUES ({}, '{}', '{}', '{}', '{}', {}, {}, '{}')""".format(BASE, message.chat.id, u'No', message.from_user.first_name, message.from_user.last_name, message.from_user.username, 0, timezone, u"voice/{}/".format(message.chat.id)))
         
         cur.execute(
-            u"""CREATE TABLE IF NOT EXISTS '{}' ('time'	TEXT, 'body' TEXT)""".format(message.chat.id))
+            u"""CREATE TABLE IF NOT EXISTS 'user.{}' ('time' TEXT, 'body' TEXT)""".format(message.chat.id))

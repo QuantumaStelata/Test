@@ -91,10 +91,10 @@ def command_new(message):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT * FROM '{}'""".format(message.chat.id))
+        cur.execute(u"""SELECT * FROM 'user.{}'""".format(message.chat.id))
 
         if cur.fetchall() != []:
-            cur.execute(u"""SELECT * FROM '{}' ORDER BY time""".format(message.chat.id))
+            cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
         
             work = '📅 Список твоих дел:\n\n'
             

@@ -19,9 +19,9 @@ def monitoring(bot):
             for i in cur.fetchall():
                 now = datetime.now() + timedelta(hours=i[1])
                 new_now = '{}.{}.{} {}:{}'.format(now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"), now.strftime("%H"), now.strftime("%M"))
-                cur.execute(u"""SELECT * FROM '{0}'""".format(i[0]))
+                cur.execute(u"""SELECT * FROM 'user.{0}'""".format(i[0]))
                 for remind in cur.fetchall():
                     if new_now in remind[0]:
                         print ('Я отправил - ' + remind[1])
                         bot.send_message(i[0], text = remind[1])
-                        cur.execute(u"""DELETE FROM '{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
+                        cur.execute(u"""DELETE FROM 'user.{}' WHERE time IN ('{}')""".format(i[0], remind[0]))

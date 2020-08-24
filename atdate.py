@@ -26,7 +26,7 @@ def atdate(message, bot):
 
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()  
-            cur.execute(u"""INSERT INTO '{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
+            cur.execute(u"""INSERT INTO 'user.{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
 
         bot.send_message(message.chat.id, REMIND)
     except:        # На случай если пользователь ввел день > 31 или месяц > 12
