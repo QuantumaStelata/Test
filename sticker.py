@@ -1,6 +1,7 @@
 import telebot
 import sqlite3
 from const import BASE, NOT_PREMIUM
+
 def sticker(message, bot): 
     stickerid = bot.get_file(message.sticker.file_id).file_path       # Хранит ID стикера
     
