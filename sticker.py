@@ -1,6 +1,6 @@
 import telebot
 import sqlite3
-from const import BASE
+from const import BASE, NOT_PREMIUM
 def sticker(message, bot): 
     stickerid = bot.get_file(message.sticker.file_id).file_path       # Хранит ID стикера
 
@@ -19,5 +19,6 @@ def sticker(message, bot):
                     message.text = "Sticker.py/Message.text/None"
         else:
             message.text = "Sticker.py/Message.text/None"
-            bot.send_message(message.chat.id, "Напоминания по стикерам Вам не доступны! Пожалуйста, приобретите премиум аккаунт!")
+            bot.send_sticker(message.chat.id, 'CAACAgUAAxkBAAIBtF8W4mnS44I1futOLOabjzGI5BuJAAL_AANxffwUdic7ErtbrcEaBA')
+            bot.send_message(message.chat.id, NOT_PREMIUM)
                 
