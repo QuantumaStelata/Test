@@ -70,6 +70,10 @@ def changetz(message):
         msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
         bot.register_next_step_handler(msg, changetz)
 
+@bot.message_handler(commands=["sticker"])
+def command_sticker(message):
+    bot.send_message(message.chat.id, 'Новая функция! Отправляешь стикер - ставишь напоминание. Для работы надо приобрести премиум аккаунт💰 и скачать стикерпак ниже.')
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIKuV9DzidsQQwkrLf8uVJCwyfaTqhzAAIBAAP00Q8Y2Vj_yRX8h3IbBA')
 
 @bot.message_handler(commands=["callback"])
 def command_callback(message):

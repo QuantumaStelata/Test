@@ -3,7 +3,7 @@ import sqlite3
 from const import BASE, NOT_PREMIUM
 def sticker(message, bot): 
     stickerid = bot.get_file(message.sticker.file_id).file_path       # Хранит ID стикера
-
+    
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
         cur.execute(u"""SELECT premium FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
