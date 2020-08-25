@@ -29,7 +29,7 @@ def command_start(message):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT chatid FROM {}""".format(const.BASE))
+        cur.execute(f"""SELECT chatid FROM {const.BASE}""")
         chatid = [i[0] for i in cur.fetchall()]
 
         if message.chat.id not in chatid:
@@ -62,7 +62,7 @@ def changetz(message):
         timezone = int(message.text)
         if 12 >= timezone >= -12:
             with sqlite3.connect('base.db') as db:
-                db.cursor().execute(u"""UPDATE {} SET timezone = {} WHERE chatid = {}""".format(const.BASE, timezone, message.chat.id))
+                db.cursor().execute(f"""UPDATE {const.BASE} SET timezone = {timezone} WHERE chatid = {message.chat.id}""")
                 bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
@@ -82,7 +82,7 @@ def command_callback(message):
     bot.register_next_step_handler(msg, callback)
 
 def callback(message):
-    bot.send_message(403689972, '@' + str(message.from_user.username) + '\nChatId - ' + str(message.chat.id) + '\n\n' + message.text, parse_mode="Markdown")
+    bot.send_message(const.ADMINID, f'@{message.from_user.username}\nChatId - {message.chat.id}\n\n{message.text}', parse_mode="Markdown")
     bot.send_message(message.chat.id, 'Я отправил, спасибо за обращение 👌', parse_mode="Markdown")
 
 
