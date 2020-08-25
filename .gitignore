@@ -1,5 +1,5 @@
 const.py
-test.py
+test1.py
 json_to_db.py
 
 base.json
@@ -8,11 +8,7 @@ base.json
 
 ffmpeg.exe
 
-/bin
+bin/
 voice/
 __pycache__/*.pyc
 
-
-*.oga
-*.wav
-test1.py
