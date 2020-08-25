@@ -10,5 +10,6 @@ ffmpeg.exe
 
 bin/
 voice/
+.vscode/
 __pycache__/*.pyc
 
