@@ -9,7 +9,7 @@ base.json
 ffmpeg.exe
 
 /bin
-/voice
+voice/
 __pycache__/*.pyc
 
 
