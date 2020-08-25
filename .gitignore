@@ -10,7 +10,7 @@ ffmpeg.exe
 
 /bin
 /voice
-/__pycache__
+__pycache__/
 
 *.pyc
 *.oga
