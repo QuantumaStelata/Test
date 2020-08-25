@@ -8,20 +8,20 @@ def list_(message, bot):
 
         cur.execute(u"""SELECT * FROM 'user.{}'""".format(message.chat.id))
 
-        if cur.fetchall() != []:
-            cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
-        
-            work = '📅 Список твоих дел:\n\n'
-            
-
-            n = 1
-            for i in cur.fetchall():
-                work = work + str(n) + ') ' + i[0].split(' ')[0][8:10] + '.' + i[0].split(' ')[0][5:7] + '.' + i[0].split(' ')[0][0:4] + ' в '+ i[0].split(' ')[1][:-3] + ' - ' + i[1] + '\n'
-                n += 1
-
-            work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
-            bot.send_message(message.chat.id, work, parse_mode="Markdown")
-            cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(BASE, message.message_id + 1, message.chat.id))
-
-        else:
+        if cur.fetchall() == []:
             bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
+            return
+
+        cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
+        
+        work = '📅 Список твоих дел:\n\n'
+        for i in enumerate(cur.fetchall(), 1):
+            j = i[1][0].split(' ')  # Разбиваем время напоминания по пробелам
+            work = work + f"{i[0]}) {j[0][8:10]}.{j[0][5:7]}.{j[0][0:4]} в {j[1][:-3]} - {i[1][1]}\n"
+        work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
+        
+        bot.send_message(message.chat.id, work, parse_mode="Markdown")
+        cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(BASE, message.message_id + 1, message.chat.id))
+
+        
+            
