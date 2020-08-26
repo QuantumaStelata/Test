@@ -1,18 +1,24 @@
+# Важные для работы бота файлы
 const.py
-test1.py
-json_to_db.py
-
-base.json
 *.db
+
+# Файлы для тестирования
+test1.py
 *.db-journal
 
-ffmpeg.exe
-
+# Папки
 bin/
 voice/
 .vscode/
-log/__pycache__/
 __pycache__/*.pyc
+log/__pycache__/
 log/*log
+
+# База для бота версии 0.2 и ранее
+base.json
+
+
+
+
 
 
