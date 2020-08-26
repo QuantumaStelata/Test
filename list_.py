@@ -6,13 +6,13 @@ def list_(message, bot):
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
-        cur.execute(u"""SELECT * FROM 'user.{}'""".format(message.chat.id))
+        cur.execute(f"""SELECT * FROM 'user.{message.chat.id}'""")
 
         if cur.fetchall() == []:
             bot.send_message(message.chat.id, 'У тебя нет дел 😔', parse_mode="Markdown")
             return
 
-        cur.execute(u"""SELECT * FROM 'user.{}' ORDER BY time""".format(message.chat.id))
+        cur.execute(f"""SELECT * FROM 'user.{message.chat.id}' ORDER BY time""")
         
         work = '📅 Список твоих дел:\n\n'
         for i in enumerate(cur.fetchall(), 1):
@@ -21,7 +21,7 @@ def list_(message, bot):
         work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
         
         bot.send_message(message.chat.id, work, parse_mode="Markdown")
-        cur.execute(u"""UPDATE '{}' SET listid = {} WHERE chatid = {}""".format(BASE, message.message_id + 1, message.chat.id))
+        cur.execute(f"""UPDATE '{BASE}' SET listid = {message.message_id + 1} WHERE chatid = {message.chat.id}""")
 
         
             

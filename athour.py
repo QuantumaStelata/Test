@@ -20,7 +20,7 @@ def athour(message, bot):
 
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
-            cur.execute(u"""SELECT timezone FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
+            cur.execute(f"""SELECT timezone FROM {BASE} WHERE chatid = {message.chat.id}""")
 
             now = datetime.now() + timedelta(hours = cur.fetchone()[0])
             remind_time = datetime(int(now.year), int(now.month), int(now.day), int(body['hour']), int(minute), int(now.second))
@@ -28,9 +28,9 @@ def athour(message, bot):
             if now > remind_time: # В случае когда пользователь указал час, который уже прошел - переносим на завтра
                 remind_time = datetime(int(now.year), int(now.month), int(now.day) + 1, int(body['hour']), int(minute), int(now.second))
                     
-            remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
+            remind = f'{remind_time.strftime("%Y")}.{remind_time.strftime("%m")}.{remind_time.strftime("%d")} {remind_time.strftime("%H")}:{remind_time.strftime("%M")}:{remind_time.strftime("%S")}'
                 
-            cur.execute(u"""INSERT INTO 'user.{}' VALUES ('{}', '{}')""".format(message.chat.id, remind, text))
+            cur.execute(f"""INSERT INTO 'user.{message.chat.id}' VALUES ('{remind}', '{text}')""")
 
         bot.send_message(message.chat.id, REMIND)
     except:      # На случай если пользователь ввел час > 23 или минуты > 59
