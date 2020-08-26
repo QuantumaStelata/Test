@@ -37,7 +37,6 @@ def command_start(message):
             msg = bot.send_message(message.chat.id, const.TIMEZONETEXT, parse_mode="Markdown")
             bot.register_next_step_handler(msg, tz)
         
-
 def tz(message):
     try:
         timezone = int(message.text)
@@ -73,11 +72,13 @@ def changetz(message):
         msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
         bot.register_next_step_handler(msg, changetz)
 
+
 @bot.message_handler(commands=["sticker"])
 def command_sticker(message):
     bot.send_message(message.chat.id, const.STICKERTEXT)
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIKuV9DzidsQQwkrLf8uVJCwyfaTqhzAAIBAAP00Q8Y2Vj_yRX8h3IbBA')
     logging.info(f'Пользователь {message.chat.id} запустил /sticker')
+
 
 @bot.message_handler(commands=["callback"])
 def command_callback(message):
@@ -88,6 +89,7 @@ def callback(message):
     bot.send_message(const.ADMINID, f'@{message.from_user.username}\nChatId - {message.chat.id}\n\n{message.text}', parse_mode="Markdown")
     bot.send_message(message.chat.id, 'Я отправил, спасибо за обращение 👌', parse_mode="Markdown")
     logging.info(f'Пользователь {message.chat.id} отправил callback с текстом - {message.text}')
+
 
 @bot.message_handler(commands=["commands"])
 def command_const(message):
@@ -100,16 +102,19 @@ def command_new(message):
     list_(message, bot)
     logging.info(f'Пользователь {message.chat.id} запустил /list')
 
+
 @bot.message_handler(content_types=["sticker"])
 def mainsticker(message):
     logging.info(f'Пользователь {message.chat.id} отправил стикер')
     sticker(message, bot)
     main(message)
     
+
 @bot.message_handler(content_types=["voice"])
 def mainvoice(message):
     voice(message, bot)
     main(message)
+
 
 @bot.message_handler(content_types=["text"])
 def main(message):
