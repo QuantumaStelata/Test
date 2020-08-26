@@ -112,6 +112,7 @@ def mainsticker(message):
 
 @bot.message_handler(content_types=["voice"])
 def mainvoice(message):
+    logging.info(f'Пользователь {message.chat.id} отправил голосовое сообщение')
     voice(message, bot)
     main(message)
 
