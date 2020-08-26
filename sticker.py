@@ -7,7 +7,7 @@ def sticker(message, bot):
     
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
-        cur.execute(u"""SELECT premium FROM {} WHERE chatid = {}""".format(BASE, message.chat.id))
+        cur.execute(f"""SELECT premium FROM {BASE} WHERE chatid = {message.chat.id}""")
 
         if cur.fetchone()[0] == 'Yes':      # Проверка на наличие премиум аккаунта.
             cur.execute(u"""SELECT * FROM stickers""")
