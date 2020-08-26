@@ -6,6 +6,7 @@ import sqlite3
 import re
 from const import BASE
 from datetime import datetime
+from log.logger import *
 
 def delet(message, bot):
     index = int(re.search(r'\d+', message.text).group())
@@ -29,6 +30,7 @@ def delet(message, bot):
 
             cur.execute(u"""DELETE FROM 'user.{}' WHERE time IN ('{}')""".format(message.chat.id, i[1][0]))     # Удаляем
             bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
+        logging.info(f'Пользователь {message.chat.id} удалил заметку')
 
         cur.execute(u"""SELECT * FROM 'user.{}'""".format(message.chat.id))
         if cur.fetchall() == []:    # Если у пользователя нет записей после удаления, редактируем последний /list

@@ -6,10 +6,10 @@ import sqlite3
 import telebot
 from const import BASE
 from datetime import datetime, timedelta
-
+from log.logger import *
 
 def monitoring(bot):
-    print ("Monitoring thread starting...")
+    logging.info('Запуск цикла мониторинга')
     while True:
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
@@ -22,6 +22,6 @@ def monitoring(bot):
                 cur.execute(u"""SELECT * FROM 'user.{0}'""".format(i[0]))
                 for remind in cur.fetchall():
                     if new_now in remind[0]:
-                        print ('Я отправил - ' + remind[1])
                         bot.send_message(i[0], text = remind[1])
                         cur.execute(u"""DELETE FROM 'user.{}' WHERE time IN ('{}')""".format(i[0], remind[0]))
+                        logging.info(f'Отправлено напоминание - {remind[1]}, пользователю - {i[0]}')
