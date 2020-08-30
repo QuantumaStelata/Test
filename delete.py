@@ -30,7 +30,7 @@ def delet(message, bot):
 
             cur.execute(f"""DELETE FROM 'user.{message.chat.id}' WHERE time IN ('{i[1][0]}')""")     # Удаляем
             bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
-        logging.info(f'Пользователь {message.chat.id} удалил заметку')
+        logging.info(f'{message.chat.id:14} | Пользователь удалил заметку')
 
         cur.execute(f"""SELECT * FROM 'user.{message.chat.id}'""")
         if cur.fetchall() == []:    # Если у пользователя нет записей после удаления, редактируем последний /list

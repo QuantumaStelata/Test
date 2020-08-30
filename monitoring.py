@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from log.logger import *
 
 def monitoring(bot):
-    logging.info('Запуск цикла мониторинга')
+    logging.info(f'{"":14} | Запуск цикла мониторинга')
     while True:
         with sqlite3.connect('base.db') as db:
             cur = db.cursor()
@@ -24,4 +24,4 @@ def monitoring(bot):
                     if new_now in remind[0]:
                         bot.send_message(i[0], text = remind[1])
                         cur.execute(f"""DELETE FROM 'user.{i[0]}' WHERE time IN ('{remind[0]}')""")
-                        logging.info(f'Отправлено напоминание - {remind[1]}, пользователю - {i[0]}')
+                        logging.info(f'{i[0]:14} | Отправлено напоминание - {remind[1]}')

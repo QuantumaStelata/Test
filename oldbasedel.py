@@ -8,7 +8,7 @@ from log.logger import *
 
 
 def old_base_del():
-    logging.info('Запуск цикла очистки базы данных от старых записей')
+    logging.info(f'{"":14} | Запуск цикла очистки базы данных от старых записей')
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
 
@@ -22,4 +22,4 @@ def old_base_del():
                 if now > data:
                     cur.execute(f"""DELETE FROM 'user.{i[0]}' WHERE time IN ('{remind[0]}')""")
 
-    logging.info('База данных очищена от старых записей')
+    logging.info(f'{"":14} | База данных очищена от старых записей')

@@ -64,7 +64,7 @@ def changetz(message):
             with sqlite3.connect('base.db') as db:
                 db.cursor().execute(f"""UPDATE {const.BASE} SET timezone = {timezone} WHERE chatid = {message.chat.id}""")
                 bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
-                logging.info(f'Пользователь {message.chat.id} поменял timezone на {timezone}')
+                logging.info(f'{message.chat.id:14} | Пользователь поменял timezone на {timezone}')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
             bot.register_next_step_handler(msg, changetz)
@@ -77,7 +77,7 @@ def changetz(message):
 def command_sticker(message):
     bot.send_message(message.chat.id, const.STICKERTEXT)
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIKuV9DzidsQQwkrLf8uVJCwyfaTqhzAAIBAAP00Q8Y2Vj_yRX8h3IbBA')
-    logging.info(f'Пользователь {message.chat.id} запустил /sticker')
+    logging.info(f'{message.chat.id:14} | Пользователь запустил /sticker')
 
 
 @bot.message_handler(commands=["callback"])
@@ -88,53 +88,53 @@ def command_callback(message):
 def callback(message):
     bot.send_message(const.ADMINID, f'@{message.from_user.username}\nChatId - {message.chat.id}\n\n{message.text}', parse_mode="Markdown")
     bot.send_message(message.chat.id, 'Я отправил, спасибо за обращение 👌', parse_mode="Markdown")
-    logging.info(f'Пользователь {message.chat.id} отправил callback с текстом - {message.text}')
+    logging.info(f'{message.chat.id:14} | Пользователь отправил callback с текстом - {message.text}')
 
 
 @bot.message_handler(commands=["commands"])
 def command_const(message):
     bot.send_message(message.chat.id, const.COMMANDS, parse_mode="Markdown")
-    logging.info(f'Пользователь {message.chat.id} запустил /commands')
+    logging.info(f'{message.chat.id:14} | Пользователь запустил /commands')
 
 
 @bot.message_handler(commands=["list"])
 def command_new(message):
     list_(message, bot)
-    logging.info(f'Пользователь {message.chat.id} запустил /list')
+    logging.info(f'{message.chat.id:14} | Пользователь запустил /list')
 
 
 @bot.message_handler(content_types=["sticker"])
 def mainsticker(message):
-    logging.info(f'Пользователь {message.chat.id} отправил стикер')
+    logging.info(f'{message.chat.id:14} | Пользователь отправил стикер')
     sticker(message, bot)
     main(message)
     
 
 @bot.message_handler(content_types=["voice"])
 def mainvoice(message):
-    logging.info(f'Пользователь {message.chat.id} отправил голосовое сообщение')
+    logging.info(f'{message.chat.id:14} | Пользователь отправил голосовое сообщение')
     voice(message, bot)
     main(message)
 
 
 @bot.message_handler(content_types=["text"])
 def main(message):
-    logging.debug(f'Пользователь {message.chat.id} отправил - {message.text}')
+    logging.debug(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
     
     if re.search(r'(\d{1,2})[.|:|/](\d{1,2})[.|:|/](\d{4}|\d{2})\s+(в\s*)?(\d{1,2})[.|:|/]?(\d{0,2})\s*(.*)', message.text, re.IGNORECASE):
-        logging.info(f'Пользователь {message.chat.id} отправил - {message.text}')
+        logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
         Thread(target=atdate, args=(message, bot)).start()
     
     elif re.search(r'(в)\s+(\d{1,2})([.|:|/]?)(\d{0,2})\s*(.*)', message.text, re.IGNORECASE):
-        logging.info(f'Пользователь {message.chat.id} отправил - {message.text}')
+        logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
         Thread(target=athour, args=(message, bot)).start()
 
     elif re.search(r'(через)\s+(\d+)\s+(минут[уы]?)\s*(.*)', message.text, re.IGNORECASE):
-        logging.info(f'Пользователь {message.chat.id} отправил - {message.text}')
+        logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
         Thread(target=inminute, args=(message, bot)).start()
             
     elif re.search(r'(через)\s+(\d+)\s+(час[ао]?[в]?)\s*(.*)', message.text, re.IGNORECASE):
-        logging.info(f'Пользователь {message.chat.id} отправил - {message.text}')
+        logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
         Thread(target=inhour, args=(message, bot)).start()
         
     elif re.search(r'удалить.?\d+', message.text, re.IGNORECASE):
@@ -149,5 +149,5 @@ if __name__ == '__main__':
     const.push(bot)                     # Рассылка по всем пользователям
     old_base_del()                      # Удаление старых записей
     Thread(target=monitoring, args=(bot,)).start()   # Запуск 2-ого потока - функция monitoring из monitoring.py
-    logging.info('Запуск цикла обработки событий')
+    logging.info(f'{"":14} | Запуск цикла обработки событий')
     bot.infinity_polling()
