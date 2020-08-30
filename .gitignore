@@ -1,6 +1,7 @@
 # Важные для работы бота файлы
 const.py
 *.db
+voice/
 
 # Файлы для тестирования
 test1.py
@@ -8,13 +9,12 @@ test1.py
 
 # Папки
 bin/
-voice/
 .vscode/
 __pycache__/*.pyc
 log/__pycache__/
 log/*log
 
-# База для бота версии 0.2 и ранее
+# База для бота версии 0.3 и ранее
 base.json
 
 
