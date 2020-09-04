@@ -8,10 +8,11 @@ import const
 
 from reguser import reg
 from list_ import list_
-from inminute import inminute
-from inhour import inhour
-from athour import athour
-from atdate import atdate
+from content_message_text import atdate, athour, inhour, inminute
+# from inminute import inminute
+# from inhour import inhour
+# from athour import athour
+# from atdate import atdate
 from delete import delet
 from sticker import sticker
 from voice import voice

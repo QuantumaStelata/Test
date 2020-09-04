@@ -13,6 +13,16 @@ from const import REMIND, NOT_UNDERSTAND
 from datetime import datetime, timedelta
 
 def atdate(message, bot):
+    '''
+    Принимает сообщения типа:
+     %D.$M.%Y в %H.%M ТЕКСТ
+     %D.$M.%Y %H.%M ТЕКСТ
+     %D.$M.%Y в %H ТЕКСТ
+     %D.$M.%Y %H ТЕКСТ
+
+     Допускаемые символы . : / 
+    '''
+
     try:
         body = re.search(r'(?P<day>\d{1,2})[.|:|/](?P<month>\d{1,2})[.|:|/](?P<year>\d{4}|\d{2})\s+(в\s*)?(?P<hour>\d{1,2})[.|:|/]?(?P<minute>\d{0,2})\s*(?P<text>.*)', message.text, re.IGNORECASE)
         

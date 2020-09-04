@@ -11,6 +11,13 @@ from const import BASE, REMIND, NOT_UNDERSTAND
 from datetime import datetime, timedelta
 
 def athour(message, bot):
+    '''
+     Принимает сообщения типа:
+     В X ТЕКСТ
+     В X:Y ТЕКСТ
+
+     Допускаемые символы . : / 
+    '''
     try:
         body = re.search(r'(в)\s+(?P<hour>\d{1,2})([.|:|/]?)(?P<minute>\d{0,2})\s*(?P<text>.*)', message.text, re.IGNORECASE)
         
