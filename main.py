@@ -87,13 +87,13 @@ def callback(message):
 
 
 @bot.message_handler(commands=["commands"])
-def commands(message):
+def command_commands(message):
     bot.send_message(message.chat.id, const.COMMANDS, parse_mode="Markdown")
     logging.info(f'{message.chat.id:14} | Пользователь запустил /commands')
 
 
 @bot.message_handler(commands=["list"])
-def command_new(message):
+def command_list(message):
     list_(message, bot)
 
 
