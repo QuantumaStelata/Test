@@ -6,18 +6,12 @@ import sqlite3
 
 import const
 
-from reguser import reg
-from list_ import list_
-from content_message_text import atdate, athour, inhour, inminute
-# from inminute import inminute
-# from inhour import inhour
-# from athour import athour
-# from atdate import atdate
-from delete import delet
-from sticker import sticker
-from voice import voice
+from content_message_commands import reg, list_
+from content_message_text import atdate, athour, inhour, inminute, delet
+from content_message_other import sticker, voice
+
 from oldbasedel import old_base_del
-from monitoring import monitoring
+from monitoring import monitoring   
 
 from log.logger import *
 
@@ -93,7 +87,7 @@ def callback(message):
 
 
 @bot.message_handler(commands=["commands"])
-def command_const(message):
+def commands(message):
     bot.send_message(message.chat.id, const.COMMANDS, parse_mode="Markdown")
     logging.info(f'{message.chat.id:14} | Пользователь запустил /commands')
 
@@ -101,7 +95,6 @@ def command_const(message):
 @bot.message_handler(commands=["list"])
 def command_new(message):
     list_(message, bot)
-    logging.info(f'{message.chat.id:14} | Пользователь запустил /list')
 
 
 @bot.message_handler(content_types=["sticker"])
