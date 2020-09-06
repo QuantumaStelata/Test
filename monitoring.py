@@ -1,7 +1,3 @@
-# Функция для мониторинга времени
-# Когда приходит время - отправляет напоминание пользователю
-# Запускается в main после функции olddelete.py 
-
 import sqlite3
 import telebot
 from const import BASE
@@ -9,6 +5,12 @@ from datetime import datetime, timedelta
 from log.logger import *
 
 def monitoring(bot):
+    '''
+    Функция для мониторинга времени
+    Когда приходит время - отправляет напоминание пользователю
+    Запускается в main после функции olddelete.py 
+    '''
+    
     logging.info(f'{"":14} | Запуск цикла мониторинга')
     while True:
         with sqlite3.connect('base.db') as db:
