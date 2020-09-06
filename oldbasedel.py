@@ -1,6 +1,3 @@
-# Функция для удаления устаревших записей пользователей
-# Запускается в main перед началом работы основных функций
-
 import sqlite3
 from const import BASE
 from datetime import datetime, timedelta
@@ -8,6 +5,11 @@ from log.logger import *
 
 
 def old_base_del():
+    '''
+    Функция для удаления устаревших записей пользователей
+    Запускается в main перед началом работы основных функций
+    '''
+    
     logging.info(f'{"":14} | Запуск цикла очистки базы данных от старых записей')
     with sqlite3.connect('base.db') as db:
         cur = db.cursor()
