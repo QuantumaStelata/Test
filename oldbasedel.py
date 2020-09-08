@@ -1,5 +1,5 @@
 import sqlite3
-from const import BASE
+from const import BASE, TABLE
 from datetime import datetime, timedelta
 from log.logger import *
 
@@ -11,10 +11,10 @@ def old_base_del():
     '''
     
     logging.info(f'{"":14} | Запуск цикла очистки базы данных от старых записей')
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(BASE) as db:
         cur = db.cursor()
 
-        cur.execute(f"""SELECT chatid, timezone FROM {BASE}""")
+        cur.execute(f"""SELECT chatid, timezone FROM {TABLE}""")
         
         for i in cur.fetchall():
             cur.execute(f"""SELECT * FROM 'user.{i[0]}'""")

@@ -1,6 +1,6 @@
 import sqlite3
 import telebot
-from const import BASE
+from const import BASE, TABLE
 from datetime import datetime, timedelta
 from log.logger import *
 
@@ -13,10 +13,10 @@ def monitoring(bot):
     
     logging.info(f'{"":14} | Запуск цикла мониторинга')
     while True:
-        with sqlite3.connect('base.db') as db:
+        with sqlite3.connect(BASE) as db:
             cur = db.cursor()
 
-            cur.execute(f"""SELECT chatid, timezone FROM {BASE}""")
+            cur.execute(f"""SELECT chatid, timezone FROM {TABLE}""")
 
             for i in cur.fetchall():
                 now = datetime.now() + timedelta(hours=i[1])

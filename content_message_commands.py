@@ -1,10 +1,10 @@
 import sqlite3
 import telebot
 from os import mkdir
-from const import BASE
+from const import BASE, TABLE
 from log.logger import *
 
-def reg(message, timezone):
+def reg_user(message, timezone):
     '''
     Регистрация пользователя командой /start
     '''
@@ -18,7 +18,7 @@ def reg(message, timezone):
             logging.warning(f'{message.chat.id:14} | Папка уже создана для пользователя')
         
         cur.execute(
-            f"""INSERT OR IGNORE INTO {BASE} VALUES ({message.chat.id}, 'No', '{message.from_user.first_name}', '{message.from_user.last_name}', '{message.from_user.username}', 0, {timezone}, '{dir}')""")
+            f"""INSERT OR IGNORE INTO {TABLE} VALUES ({message.chat.id}, 'No', '{message.from_user.first_name}', '{message.from_user.last_name}', '{message.from_user.username}', 0, {timezone}, '{dir}')""")
         
         cur.execute(
             f"""CREATE TABLE IF NOT EXISTS 'user.{message.chat.id}' ('time' TEXT, 'body' TEXT)""")
@@ -26,12 +26,12 @@ def reg(message, timezone):
         logging.info(f'{message.chat.id:14} | Новый пользователь')
 
 
-def list_(message, bot):
+def list_user(message, bot):
     '''
     Команда /list. Список записей пользователя
     '''
     
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(BASE) as db:
         cur = db.cursor()
 
         cur.execute(f"""SELECT * FROM 'user.{message.chat.id}'""")
@@ -49,5 +49,5 @@ def list_(message, bot):
         work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
         
         bot.send_message(message.chat.id, work, parse_mode="Markdown")
-        cur.execute(f"""UPDATE '{BASE}' SET listid = {message.message_id + 1} WHERE chatid = {message.chat.id}""")
+        cur.execute(f"""UPDATE '{TABLE}' SET listid = {message.message_id + 1} WHERE chatid = {message.chat.id}""")
         logging.info(f'{message.chat.id:14} | Пользователь запустил /list')

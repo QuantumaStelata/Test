@@ -6,7 +6,7 @@ import sqlite3
 
 import const
 
-from content_message_commands import reg, list_
+from content_message_commands import reg_user, list_user
 from content_message_text import atdate, athour, inhour, inminute, delet
 from content_message_other import sticker, voice
 
@@ -22,10 +22,10 @@ bot = telebot.TeleBot(const.TOKEN)
 def command_start(message):
     bot.send_message(message.chat.id, const.START, parse_mode="Markdown")
 
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(const.BASE) as db:
         cur = db.cursor()
 
-        cur.execute(f"""SELECT chatid FROM {const.BASE}""")
+        cur.execute(f"""SELECT chatid FROM {const.TABLE}""")
         chatid = [i[0] for i in cur.fetchall()]
 
         if message.chat.id not in chatid:
@@ -36,7 +36,7 @@ def tz(message):
     try:
         timezone = int(message.text)
         if 12 >= timezone >= -12:
-            Thread(target=reg, args = (message, timezone)).start()
+            Thread(target=reg_user, args = (message, timezone)).start()
             bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
         else:
             msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз ввести свой часовой пояс...')
@@ -56,8 +56,8 @@ def changetz(message):
     try:
         timezone = int(message.text)
         if 12 >= timezone >= -12:
-            with sqlite3.connect('base.db') as db:
-                db.cursor().execute(f"""UPDATE {const.BASE} SET timezone = {timezone} WHERE chatid = {message.chat.id}""")
+            with sqlite3.connect(const.BASE) as db:
+                db.cursor().execute(f"""UPDATE {const.TABLE} SET timezone = {timezone} WHERE chatid = {message.chat.id}""")
                 bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
                 logging.info(f'{message.chat.id:14} | Пользователь поменял timezone на {timezone}')
         else:
@@ -94,7 +94,7 @@ def command_commands(message):
 
 @bot.message_handler(commands=["list"])
 def command_list(message):
-    list_(message, bot)
+    list_user(message, bot)
 
 
 @bot.message_handler(content_types=["sticker"])

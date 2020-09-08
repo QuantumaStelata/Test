@@ -1,7 +1,7 @@
 import telebot
 import sqlite3
 import re
-from const import BASE, REMIND, NOT_UNDERSTAND
+from const import BASE, TABLE, REMIND, NOT_UNDERSTAND
 from datetime import datetime, timedelta
 from log.logger import *
 
@@ -28,7 +28,7 @@ def atdate(message, bot):
         remind_time = datetime(int(year), int(body['month']), int(body['day']), int(body['hour']), int(minute), int(now.second))
         remind = f'{remind_time.strftime("%Y")}.{remind_time.strftime("%m")}.{remind_time.strftime("%d")} {remind_time.strftime("%H")}:{remind_time.strftime("%M")}:{remind_time.strftime("%S")}'
 
-        with sqlite3.connect('base.db') as db:
+        with sqlite3.connect(BASE) as db:
             cur = db.cursor()  
             cur.execute(f"""INSERT INTO 'user.{message.chat.id}' VALUES ('{remind}', '{text}')""")
 
@@ -53,9 +53,9 @@ def athour(message, bot):
         text = '🤷🏻‍♀️' if body['text'] == '' else body['text']
         
 
-        with sqlite3.connect('base.db') as db:
+        with sqlite3.connect(BASE) as db:
             cur = db.cursor()
-            cur.execute(f"""SELECT timezone FROM {BASE} WHERE chatid = {message.chat.id}""")
+            cur.execute(f"""SELECT timezone FROM {TABLE} WHERE chatid = {message.chat.id}""")
 
             now = datetime.now() + timedelta(hours = cur.fetchone()[0])
             remind_time = datetime(int(now.year), int(now.month), int(now.day), int(body['hour']), int(minute), int(now.second))
@@ -82,9 +82,9 @@ def inhour(message, bot):
 
     text = '🤷🏻‍♀️' if body['text'] == '' else body['text']     #Если напоминание пустое, присваиваем эмодзи, чтобы не получить ошибку пустого сообщения при напоминании
     
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(BASE) as db:
         cur = db.cursor()
-        cur.execute(f"""SELECT timezone FROM {BASE} WHERE chatid = {message.chat.id}""")
+        cur.execute(f"""SELECT timezone FROM {TABLE} WHERE chatid = {message.chat.id}""")
 
         remind_time = datetime.now() + timedelta(hours=int(body['hour']) + cur.fetchone()[0])
         remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
@@ -103,9 +103,9 @@ def inminute(message, bot):
 
     text = '🤷🏻‍♀️' if body['text'] == '' else body['text']     #Если напоминание пустое, присваиваем эмодзи, чтобы не получить ошибку пустого сообщения при напоминании
     
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(BASE) as db:
         cur = db.cursor()
-        cur.execute(f"""SELECT timezone FROM {BASE} WHERE chatid = {message.chat.id}""")
+        cur.execute(f"""SELECT timezone FROM {TABLE} WHERE chatid = {message.chat.id}""")
 
         remind_time = datetime.now() + timedelta(hours = cur.fetchone()[0], minutes = int(body['minute']))
         remind = str(remind_time.strftime("%Y")) + '.' + str(remind_time.strftime("%m")) + '.' + str(remind_time.strftime("%d")) + ' ' + str(remind_time.strftime("%H")) + ':' + str(remind_time.strftime("%M")) + ':' + str(remind_time.strftime("%S"))
@@ -122,7 +122,7 @@ def delet(message, bot):
     
     index = int(re.search(r'\d+', message.text).group())
 
-    with sqlite3.connect('base.db') as db:
+    with sqlite3.connect(BASE) as db:
         cur = db.cursor()
         cur.execute(f"""SELECT * FROM 'user.{message.chat.id}' ORDER BY time""")
         body = [i for i in cur.fetchall()]      # Получаем список записок пользователя
@@ -141,11 +141,12 @@ def delet(message, bot):
 
             cur.execute(f"""DELETE FROM 'user.{message.chat.id}' WHERE time IN ('{i[1][0]}')""")     # Удаляем
             bot.send_message(message.chat.id, '❌ Я удалил твою заметку')
-        logging.info(f'{message.chat.id:14} | Пользователь удалил заметку')
+            logging.info(f'{message.chat.id:14} | Пользователь удалил заметку')
+            break
 
         cur.execute(f"""SELECT * FROM 'user.{message.chat.id}'""")
         if cur.fetchall() == []:    # Если у пользователя нет записей после удаления, редактируем последний /list
-            cur.execute(f"""SELECT listid FROM {BASE} WHERE chatid = {message.chat.id}""")
+            cur.execute(f"""SELECT listid FROM {TABLE} WHERE chatid = {message.chat.id}""")
             bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text='У тебя нет дел 😔', parse_mode="Markdown")
             return
 
@@ -157,5 +158,5 @@ def delet(message, bot):
             work = work + f"{i[0]}) {j[0][8:10]}.{j[0][5:7]}.{j[0][0:4]} в {j[1][:-3]} - {i[1][1]}\n"
         work = work + '\nЧтобы удалить пункт напиши - "Удалить (номер пункта)"'
         
-        cur.execute(f"""SELECT listid FROM {BASE} WHERE chatid = {message.chat.id}""")
+        cur.execute(f"""SELECT listid FROM {TABLE} WHERE chatid = {message.chat.id}""")
         bot.edit_message_text(chat_id=message.chat.id, message_id=cur.fetchone()[0], text=work, parse_mode="Markdown")
