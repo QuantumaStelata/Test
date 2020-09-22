@@ -1,7 +1,7 @@
 import sqlite3
 from const import BASE, TABLE
 from datetime import datetime, timedelta
-from log.logger import *
+from log.logger import logging
 
 
 def old_base_del():

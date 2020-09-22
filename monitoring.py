@@ -2,7 +2,7 @@ import sqlite3
 import telebot
 from const import BASE, TABLE
 from datetime import datetime, timedelta
-from log.logger import *
+from log.logger import logging
 
 def monitoring(bot):
     '''

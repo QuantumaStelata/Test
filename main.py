@@ -8,12 +8,12 @@ import const
 
 from content_message_commands import reg_user, list_user
 from content_message_text import atdate, athour, inhour, inminute, delet
-from content_message_other import sticker, voice
+from content_message_other import sticker, voice, weather
 
 from oldbasedel import old_base_del
 from monitoring import monitoring   
 
-from log.logger import *
+from log.logger import logging
 
 bot = telebot.TeleBot(const.TOKEN)
 
@@ -95,6 +95,11 @@ def command_commands(message):
 @bot.message_handler(commands=["list"])
 def command_list(message):
     list_user(message, bot)
+
+
+@bot.message_handler(commands=["weather"])
+def command_weather(message):
+    weather(message, bot)
 
 
 @bot.message_handler(content_types=["sticker"])

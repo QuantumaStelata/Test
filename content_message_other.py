@@ -70,3 +70,7 @@ def voice(message, bot):
             bot.send_message(message.chat.id, f"🗣 Вы сказали: {message.text.capitalize()}", parse_mode="Markdown")
     except:
         message.text = "None"
+
+
+def weather(message, bot):
+    bot.send_message(message.chat.id, 'Re')

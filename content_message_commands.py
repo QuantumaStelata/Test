@@ -2,7 +2,7 @@ import sqlite3
 import telebot
 from os import mkdir
 from const import BASE, TABLE
-from log.logger import *
+from log.logger import logging
 
 def reg_user(message, timezone):
     '''

@@ -3,7 +3,7 @@ import sqlite3
 import re
 from const import BASE, TABLE, REMIND, NOT_UNDERSTAND
 from datetime import datetime, timedelta
-from log.logger import *
+from log.logger import logging
 
 
 def atdate(message, bot):
