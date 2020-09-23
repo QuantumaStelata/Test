@@ -1,10 +1,11 @@
 import sqlite3
 import telebot
+from requests import get
 from os import mkdir
-from const import BASE, TABLE
+from const import BASE, TABLE, APPID
 from log.logger import logging
 
-def reg_user(message, timezone):
+def reg_user(message):
     '''
     Регистрация пользователя командой /start
     '''
@@ -17,8 +18,11 @@ def reg_user(message, timezone):
         except:
             logging.warning(f'{message.chat.id:14} | Папка уже создана для пользователя')
         
+        res = get("http://api.openweathermap.org/data/2.5/weather",
+                         params={'lat': message.location.latitude, 'lon': message.location.longitude, 'units': 'metric', 'lang': 'ru', 'APPID': APPID}).json()
+
         cur.execute(
-            f"""INSERT OR IGNORE INTO {TABLE} VALUES ({message.chat.id}, 'No', '{message.from_user.first_name}', '{message.from_user.last_name}', '{message.from_user.username}', 0, {timezone}, '{dir}')""")
+            f"""INSERT OR IGNORE INTO {TABLE} VALUES ({message.chat.id}, 'No', '{message.from_user.first_name}', '{message.from_user.last_name}', '{message.from_user.username}', '{res['coord']['lon']}', '{res['coord']['lat']}', 0, {res['timezone']/3600}, '{dir}')""")
         
         cur.execute(
             f"""CREATE TABLE IF NOT EXISTS 'user.{message.chat.id}' ('time' TEXT, 'body' TEXT)""")

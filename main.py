@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 from threading import Thread
 
 import re
@@ -8,7 +9,7 @@ import const
 
 from content_message_commands import reg_user, list_user
 from content_message_text import atdate, athour, inhour, inminute, delet
-from content_message_other import sticker, voice, weather
+from content_message_other import push, sticker, voice, weather
 
 from oldbasedel import old_base_del
 from monitoring import monitoring   
@@ -29,28 +30,27 @@ def command_start(message):
         chatid = [i[0] for i in cur.fetchall()]
 
         if message.chat.id not in chatid:
-            msg = bot.send_message(message.chat.id, const.TIMEZONETEXT, parse_mode="Markdown")
-            bot.register_next_step_handler(msg, tz)
-        
-def tz(message):
-    try:
-        timezone = int(message.text)
-        if 12 >= timezone >= -12:
-            Thread(target=reg_user, args = (message, timezone)).start()
-            bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
-        else:
-            msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз ввести свой часовой пояс...')
-            bot.register_next_step_handler(msg, tz)
-            return
-    except:
-        msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз ввести свой часовой пояс...')
-        bot.register_next_step_handler(msg, tz)
+            keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+            button_geo = types.KeyboardButton(text="Отправить местоположение", request_location=True)
+            keyboard.add(button_geo)
+
+            msg = bot.send_message(message.chat.id, const.GEOLOCTEXT, parse_mode="Markdown", reply_markup=keyboard)
+
+@bot.message_handler(content_types=["location"])
+def location(message):
+    if message.location is not None:
+        Thread(target=reg_user, args = (message,)).start()
+        bot.send_message(message.chat.id, '✅ Часовой пояс установлен.', reply_markup=types.ReplyKeyboardRemove()) 
 
 
 @bot.message_handler(commands=["time"])
 def command_time(message):
-    msg = bot.send_message(message.chat.id, const.TIMEZONETEXT)
-    bot.register_next_step_handler(msg, changetz)
+    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    button_geo = types.KeyboardButton(text="Отправить местоположение", request_location=True)
+    keyboard.add(button_geo)
+
+    msg = bot.send_message(message.chat.id, const.GEOLOCTEXT, parse_mode="Markdown", reply_markup=keyboard)
+
 
 def changetz(message):
     try:
@@ -145,8 +145,8 @@ def main(message):
 
 
 if __name__ == '__main__':
-    const.push(bot)                     # Рассылка по всем пользователям
-    old_base_del()                      # Удаление старых записей
+    push(bot)                     # Рассылка по всем пользователям
+    old_base_del()                # Удаление старых записей
     Thread(target=monitoring, args=(bot,)).start()   # Запуск 2-ого потока - функция monitoring из monitoring.py
     logging.info(f'{"":14} | Запуск цикла обработки событий')
     bot.infinity_polling()

@@ -5,7 +5,25 @@ import speech_recognition as sr
 from requests import get
 from subprocess import run
 
-from const import BASE, TABLE, NOT_PREMIUM, TOKEN
+from const import BASE, TABLE, NOT_PREMIUM, TOKEN, APPID
+
+
+def push(bot):
+    '''
+    Функция для рассылки сообщений пользователям
+    '''
+    
+    push = ""
+    if push:
+        with sqlite3.connect("base.db") as db:
+            cur = db.cursor()
+            cur.execute(f"""SELECT chatid FROM {TABLE}""")
+            for users in cur.fetchall():
+                try:
+                    bot.send_message(users[0], push, parse_mode="Markdown")
+                    logging.info(f"{users[0]:14} | Рассылка пришла пользователю ")
+                except:
+                    pass
 
 
 def sticker(message, bot):
@@ -73,4 +91,14 @@ def voice(message, bot):
 
 
 def weather(message, bot):
-    bot.send_message(message.chat.id, 'Re')
+    with sqlite3.connect(BASE) as db:
+        cur = db.cursor()
+        cur.execute(f"""SELECT lon, lat FROM {TABLE} WHERE chatid = {message.chat.id}""")
+
+        geo = cur.fetchall()[0]
+
+        res = get("http://api.openweathermap.org/data/2.5/weather",
+                        params={'lat': geo[1], 'lon': geo[0], 'units': 'metric', 'lang': 'ru', 'APPID': APPID}).json()
+        
+        bot.send_message(message.chat.id, res['main']['temp'])
+        
