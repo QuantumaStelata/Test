@@ -126,7 +126,7 @@ def mainvoice(message):
 
 @bot.message_handler(content_types=["text"])
 def main(message):
-    logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
+    logging.debug(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
     
     if re.search(r'(\d{1,2})[.|:|/](\d{1,2})[.|:|/](\d{4}|\d{2})\s+(в\s*)?(\d{1,2})[.|:|/]?(\d{0,2})\s*(.*)', message.text, re.IGNORECASE):
         logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
