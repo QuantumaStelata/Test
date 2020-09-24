@@ -6,6 +6,7 @@ from requests import get
 from subprocess import run
 
 from const import BASE, TABLE, NOT_PREMIUM, TOKEN, APPID
+from log.logger import logging
 
 
 def push(bot):
@@ -100,5 +101,12 @@ def weather(message, bot):
         res = get("http://api.openweathermap.org/data/2.5/weather",
                         params={'lat': geo[1], 'lon': geo[0], 'units': 'metric', 'lang': 'ru', 'APPID': APPID}).json()
         
-        bot.send_message(message.chat.id, res['main']['temp'])
+        temp = round(res['main']['temp'])
+        feels_like = round(res['main']['feels_like'])
+        humidity = round(res['main']['humidity'])
+        wind_speed = round(res['wind']['speed'])
+        
+        text_weather = f"Погода по вашей геолокации:\n\n🌡 Температура воздуха - {temp}°\n👌 Чувствуется как - {feels_like}°\n\n💦 Влажность - {humidity}%\n\n🌪 Ветер - {wind_speed} м/с"
+        
+        bot.send_message(message.chat.id, text_weather)
         

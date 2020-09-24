@@ -29,6 +29,14 @@ def reg_user(message):
 
         logging.info(f'{message.chat.id:14} | Новый пользователь')
 
+def change_geo(message, bot):
+    with sqlite3.connect(BASE) as db:
+        res = get("http://api.openweathermap.org/data/2.5/weather",
+                         params={'lat': message.location.latitude, 'lon': message.location.longitude, 'units': 'metric', 'lang': 'ru', 'APPID': APPID}).json()
+
+        db.cursor().execute(f"""UPDATE {TABLE} SET lon = {message.location.longitude}, lat = {message.location.latitude}, timezone = {res['timezone']/3600} WHERE chatid = {message.chat.id}""")
+        logging.info(f'{message.chat.id:14} | Поменял геолокацию')
+
 
 def list_user(message, bot):
     '''

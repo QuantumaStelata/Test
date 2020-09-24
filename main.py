@@ -7,7 +7,7 @@ import sqlite3
 
 import const
 
-from content_message_commands import reg_user, list_user
+from content_message_commands import reg_user, change_geo, list_user
 from content_message_text import atdate, athour, inhour, inminute, delet
 from content_message_other import push, sticker, voice, weather
 
@@ -35,12 +35,7 @@ def command_start(message):
             keyboard.add(button_geo)
 
             msg = bot.send_message(message.chat.id, const.GEOLOCTEXT, parse_mode="Markdown", reply_markup=keyboard)
-
-@bot.message_handler(content_types=["location"])
-def location(message):
-    if message.location is not None:
-        Thread(target=reg_user, args = (message,)).start()
-        bot.send_message(message.chat.id, '✅ Часовой пояс установлен.', reply_markup=types.ReplyKeyboardRemove()) 
+            bot.register_next_step_handler(msg, location)
 
 
 @bot.message_handler(commands=["time"])
@@ -50,22 +45,34 @@ def command_time(message):
     keyboard.add(button_geo)
 
     msg = bot.send_message(message.chat.id, const.GEOLOCTEXT, parse_mode="Markdown", reply_markup=keyboard)
+    bot.register_next_step_handler(msg, location)
 
 
-def changetz(message):
-    try:
-        timezone = int(message.text)
-        if 12 >= timezone >= -12:
-            with sqlite3.connect(const.BASE) as db:
-                db.cursor().execute(f"""UPDATE {const.TABLE} SET timezone = {timezone} WHERE chatid = {message.chat.id}""")
-                bot.send_message(message.chat.id, '✅ Часовой пояс установлен.')
-                logging.info(f'{message.chat.id:14} | Пользователь поменял timezone на {timezone}')
-        else:
-            msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
-            bot.register_next_step_handler(msg, changetz)
-    except:
-        msg = bot.send_message(message.chat.id, 'Что-то не так! Попробуйте еще раз...')
-        bot.register_next_step_handler(msg, changetz)
+@bot.message_handler(content_types=["location"])
+def location(message):
+    with sqlite3.connect(const.BASE) as db:
+        cur = db.cursor()
+
+        cur.execute(f"""SELECT chatid FROM {const.TABLE}""")
+        chatid = [i[0] for i in cur.fetchall()]
+        
+        if message.chat.id not in chatid:
+            if message.location is not None:
+                Thread(target=reg_user, args = (message,)).start()
+                bot.send_message(message.chat.id, '✅ Часовой пояс установлен.', reply_markup=types.ReplyKeyboardRemove())
+                return
+            
+            msg = bot.send_message(message.chat.id, const.GEOLOCTEXT)
+            bot.register_next_step_handler(msg, location)
+            return
+        
+        if message.location is not None:
+            Thread(target=change_geo, args = (message, bot)).start()
+            bot.send_message(message.chat.id, '✅ Часовой пояс установлен.', reply_markup=types.ReplyKeyboardRemove())
+            return
+        
+        msg = bot.send_message(message.chat.id, const.GEOLOCTEXT)
+        bot.register_next_step_handler(msg, location)
 
 
 @bot.message_handler(commands=["sticker"])
@@ -100,6 +107,7 @@ def command_list(message):
 @bot.message_handler(commands=["weather"])
 def command_weather(message):
     weather(message, bot)
+    logging.info(f'{message.chat.id:14} | Пользователь запустил /weather')
 
 
 @bot.message_handler(content_types=["sticker"])
@@ -118,7 +126,7 @@ def mainvoice(message):
 
 @bot.message_handler(content_types=["text"])
 def main(message):
-    logging.debug(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
+    logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
     
     if re.search(r'(\d{1,2})[.|:|/](\d{1,2})[.|:|/](\d{4}|\d{2})\s+(в\s*)?(\d{1,2})[.|:|/]?(\d{0,2})\s*(.*)', message.text, re.IGNORECASE):
         logging.info(f'{message.chat.id:14} | Пользователь отправил - {message.text}')
